@@ -50,6 +50,9 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -58,6 +61,7 @@ body {
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
+    width: 100%;
     position: relative;
     background-image: 
         radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
@@ -66,6 +70,16 @@ body {
 }
 
 /* Accessibility & Global Elements */
+img, svg, video {
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, li, span, label {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
 a {
     color: inherit;
     text-decoration: none;
@@ -75,6 +89,7 @@ a {
 button, input, select, textarea {
     font-family: inherit;
     font-size: inherit;
+    max-width: 100%;
 }
 
 .container {
@@ -156,6 +171,11 @@ button, input, select, textarea {
     position: relative;
     white-space: nowrap;
     text-decoration: none;
+    max-width: 100%;
+}
+
+.btn svg {
+    flex-shrink: 0;
 }
 
 .btn-sm {
@@ -360,19 +380,37 @@ button, input, select, textarea {
     display: none;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: 5px;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    z-index: 100000;
 }
 
 .mobile-toggle span {
     display: block;
-    width: 24px;
+    width: 22px;
     height: 2px;
     background-color: var(--text-white);
-    transition: var(--transition-fast);
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+    transform-origin: center;
+}
+
+.mobile-toggle.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-toggle.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 /* ==========================================================================
@@ -747,6 +785,7 @@ button, input, select, textarea {
     position: relative;
     border-left: 2px solid rgba(56, 189, 248, 0.3);
     padding-left: 1.75rem;
+    margin-left: 1.25rem;
     margin-bottom: 2.25rem;
 }
 
@@ -761,7 +800,7 @@ button, input, select, textarea {
 
 .timeline-icon {
     position: absolute;
-    left: -2.7rem;
+    left: calc(-1.75rem - 15px);
     top: 0;
     width: 30px;
     height: 30px;
@@ -1424,6 +1463,7 @@ button, input, select, textarea {
     flex-direction: column;
     gap: 0.75rem;
     min-width: 250px;
+    max-width: 100%;
 }
 
 /* ==========================================================================
@@ -1920,10 +1960,14 @@ button, input, select, textarea {
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 500px;
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
     position: relative;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
     transform: translateY(20px);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
 }
 
 .modal-backdrop.open .modal-box {
@@ -1941,6 +1985,7 @@ button, input, select, textarea {
     line-height: 1;
     cursor: pointer;
     transition: color 0.2s ease;
+    z-index: 10;
 }
 
 .modal-close:hover {
@@ -1949,6 +1994,8 @@ button, input, select, textarea {
 
 .modal-content {
     padding: 2.25rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {
@@ -1992,9 +2039,12 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   Responsive Breakpoints (Full Mobile & Tablet Support)
+   Responsive Breakpoints (Full Mobile, Tablet & Cross-Device Support)
+   Tested across all screen widths: 320px to 1440px+
    ========================================================================== */
-@media (max-width: 1180px) {
+
+/* --- 1. Large Tablets & Small Laptops (<= 1200px) --- */
+@media (max-width: 1200px) {
     .nav-links {
         gap: 0.85rem;
     }
@@ -2003,67 +2053,120 @@ button, input, select, textarea {
     }
     .pricing-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
     .competitive-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
 }
 
+/* --- 2. Medium Tablets (<= 1024px) --- */
 @media (max-width: 1024px) {
+    .container {
+        padding: 0 1.25rem;
+    }
+    .section {
+        padding: 4.5rem 0;
+    }
     .hero-container {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 2.75rem;
     }
     .hero-title {
-        font-size: 2.5rem;
+        font-size: clamp(2.2rem, 5vw, 2.75rem);
     }
     .hero-pills, .hero-cta-group, .hero-highlights {
         justify-content: center;
     }
     .hero-visual {
-        max-width: 560px;
+        max-width: 540px;
         margin: 0 auto;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
     }
     .about-grid {
         grid-template-columns: 1fr;
+        gap: 2.75rem;
+    }
+    .profile-frame {
+        max-width: 440px;
+        margin: 0 auto;
+    }
+    .tech-stack-row {
+        justify-content: center;
+        max-width: 520px;
+        margin: 1.25rem auto 0 auto;
     }
     .courses-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
-    .features-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
     .contact-grid {
         grid-template-columns: 1fr;
         gap: 2.5rem;
     }
+    .contact-card {
+        padding: 2.75rem 2.25rem;
+    }
     .footer-container {
         grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
     }
 }
 
+/* --- 3. Tablet Portrait & Hamburger Nav Trigger (<= 860px) --- */
 @media (max-width: 860px) {
+    .navbar {
+        padding: 0.65rem 0;
+    }
+    .nav-container {
+        gap: 0.75rem;
+    }
     .nav-links {
         display: none;
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
-        background: #0a0f1d;
+        background: #090e1a;
         flex-direction: column;
-        padding: 1.5rem 1.75rem;
-        border-bottom: 2px solid rgba(56, 189, 248, 0.35);
-        gap: 0.9rem;
+        padding: 1.5rem 1.5rem 1.75rem 1.5rem;
+        border-bottom: 2px solid rgba(56, 189, 248, 0.4);
+        gap: 0.85rem;
         z-index: 99999;
         box-shadow: 0 25px 60px rgba(0, 0, 0, 0.98);
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .nav-links.open {
         display: flex;
     }
     .nav-link {
         font-size: 1.05rem;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 0.6rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        width: 100%;
+    }
+    .nav-mobile-cta {
+        display: flex !important;
+        margin-top: 0.5rem;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 0.75rem 1rem;
     }
     .mobile-toggle {
         display: flex;
@@ -2073,102 +2176,694 @@ button, input, select, textarea {
     }
 }
 
-@media (max-width: 640px) {
+/* --- 4. Small Tablets & Phablets (<= 768px) --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1.15rem;
+    }
     .section {
-        padding: 3.75rem 0;
+        padding: 4rem 0;
     }
     .section-title {
-        font-size: 1.95rem;
+        font-size: clamp(1.85rem, 5vw, 2.2rem);
     }
-    .hero-title {
-        font-size: 2.1rem;
+    .section-desc {
+        font-size: 0.98rem;
+        margin-bottom: 2.25rem;
     }
-    .hero-cta-group {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .custom-plan-banner {
         flex-direction: column;
-        width: 100%;
-    }
-    .hero-cta-group .btn {
-        width: 100%;
-    }
-    .hero-pills {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .pill-item {
-        justify-content: center;
-    }
-    .profile-frame {
-        height: 360px;
-    }
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+        text-align: center;
+        padding: 1.75rem 1.25rem;
         gap: 1.25rem;
     }
-    .stat-number {
-        font-size: 1.9rem;
-    }
-    .courses-grid,
-    .competitive-grid,
-    .features-grid,
-    .pricing-grid,
-    .testimonials-grid {
-        grid-template-columns: 1fr;
-    }
-    .course-card, .comp-card, .pricing-card, .feature-card {
-        padding: 1.65rem;
+    .custom-plan-banner .btn {
+        width: 100%;
     }
     .calc-radio-group {
         grid-template-columns: 1fr;
-    }
-    .calculator-card {
-        padding: 1.65rem;
+        gap: 0.75rem;
     }
     .calc-result-box {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
-        padding: 1.5rem;
+        padding: 1.5rem 1.25rem;
+        gap: 1.25rem;
     }
     .result-amount-wrap {
         justify-content: center;
     }
-    .form-row {
-        grid-template-columns: 1fr;
+    .result-actions {
+        min-width: 0;
+        width: 100%;
     }
+    .result-actions .btn {
+        width: 100%;
+    }
+    .wa-tooltip {
+        display: none !important;
+    }
+}
+
+/* --- 5. Standard Mobile Screens (<= 640px) --- */
+@media (max-width: 640px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .section {
+        padding: 3.5rem 0;
+    }
+    .section-tag {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.85rem;
+    }
+    .section-title {
+        font-size: clamp(1.7rem, 5.5vw, 2rem);
+        line-height: 1.3;
+    }
+    .section-title br {
+        display: none;
+    }
+    
+    /* General Button Behavior on Mobile (Prevent Cutoff) */
+    .btn {
+        white-space: normal;
+        text-align: center;
+        max-width: 100%;
+        line-height: 1.35;
+    }
+    .btn-lg {
+        padding: 0.8rem 1.25rem;
+        font-size: 0.98rem;
+    }
+    .btn-block {
+        width: 100%;
+    }
+
+    /* Hero Section Mobile */
+    .hero-section {
+        padding: 3rem 0 2.5rem 0;
+    }
+    .hero-bg-glow {
+        width: 100%;
+        max-width: 100vw;
+        height: 280px;
+    }
+    .hero-title {
+        font-size: clamp(1.75rem, 6.2vw, 2.2rem);
+        line-height: 1.25;
+        margin-bottom: 1rem;
+    }
+    .hero-subtitle {
+        font-size: 0.98rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    .hero-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.85rem;
+        border-radius: var(--radius-md);
+        max-width: 100%;
+        line-height: 1.35;
+        text-align: center;
+        justify-content: center;
+    }
+    .hero-pills {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.55rem;
+        margin-bottom: 1.75rem;
+    }
+    .pill-item {
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+        font-size: 0.82rem;
+        padding: 0.45rem 0.75rem;
+    }
+    .hero-cta-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .hero-cta-group .btn {
+        width: 100%;
+    }
+    .hero-highlights {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.84rem;
+    }
+
+    /* Floating Badges Stacked Under Banner on Mobile */
+    .hero-visual {
+        max-width: 100%;
+        margin: 1.5rem auto 0 auto;
+    }
+    .visual-wrapper {
+        border-radius: var(--radius-md);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .hero-img {
+        border-radius: var(--radius-md);
+    }
+    .floating-badge {
+        position: static;
+        width: 100%;
+        margin-top: 0.75rem;
+        box-shadow: none;
+        backdrop-filter: none;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid var(--border-color);
+        padding: 0.65rem 0.9rem;
+    }
+    .badge-top {
+        border-left: 3px solid #38bdf8;
+    }
+    .badge-bottom {
+        border-left: 3px solid #10b981;
+    }
+
+    /* Stats Strip */
+    .hero-stats-strip {
+        margin-top: 2.75rem;
+        padding: 1.35rem 0;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .stat-card {
+        padding: 0.5rem 0.25rem;
+    }
+    .stat-number {
+        font-size: 1.75rem;
+    }
+    .stat-label {
+        font-size: 0.78rem;
+        line-height: 1.35;
+    }
+
+    /* About Section */
+    .profile-frame {
+        height: 360px;
+        border-radius: var(--radius-md);
+    }
+    .profile-overlay-badge {
+        padding: 1rem 1.15rem;
+    }
+    .profile-overlay-badge strong {
+        font-size: 1.2rem;
+    }
+    .profile-overlay-badge .badge-role {
+        font-size: 0.82rem;
+    }
+    .profile-overlay-badge .badge-edu {
+        font-size: 0.75rem;
+    }
+    .about-info-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: var(--radius-md);
+    }
+    .about-card-title {
+        font-size: 1.35rem;
+    }
+    .about-bio {
+        font-size: 0.94rem;
+        line-height: 1.65;
+        margin-bottom: 1.5rem;
+    }
+    .timeline {
+        padding-left: 1.5rem;
+        margin-left: 1rem;
+        margin-bottom: 1.75rem;
+    }
+    .timeline-icon {
+        left: calc(-1.5rem - 14px);
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+    .timeline-content h4 {
+        font-size: 1.02rem;
+    }
+    .timeline-place {
+        font-size: 0.82rem;
+    }
+    .timeline-desc {
+        font-size: 0.88rem;
+    }
+    .mentor-cta-row {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+    .mentor-cta-row .btn {
+        width: 100%;
+    }
+
+    /* Courses Section */
+    .filter-tabs {
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+    .filter-tab {
+        padding: 0.5rem 0.95rem;
+        font-size: 0.82rem;
+        flex: 1 1 auto;
+        text-align: center;
+    }
+    .courses-grid {
+        grid-template-columns: 1fr;
+        gap: 1.35rem;
+    }
+    .course-card {
+        padding: 1.6rem 1.25rem;
+        border-radius: var(--radius-md);
+    }
+    .course-header {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .course-title {
+        font-size: 1.22rem;
+    }
+    .course-desc {
+        font-size: 0.88rem;
+        margin-bottom: 1.25rem;
+    }
+    .course-topics li {
+        font-size: 0.84rem;
+    }
+    .course-footer {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 0.85rem;
+    }
+    .course-price {
+        align-items: center;
+    }
+    .course-footer .btn {
+        width: 100%;
+    }
+
+    /* Competitive Programming & Why Choose Us */
+    .competitive-grid,
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .comp-card,
+    .feature-card {
+        padding: 1.6rem 1.25rem;
+        border-radius: var(--radius-md);
+    }
+    .comp-title,
+    .feature-title {
+        font-size: 1.18rem;
+    }
+    .comp-desc,
+    .feature-desc {
+        font-size: 0.88rem;
+    }
+    .comp-list li {
+        align-items: flex-start;
+        font-size: 0.84rem;
+    }
+
+    /* Fees Section */
+    .pricing-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: var(--radius-md);
+    }
+    .plan-name {
+        font-size: 1.18rem;
+    }
+    .plan-target {
+        min-height: auto;
+        font-size: 0.82rem;
+    }
+    .plan-price .amount {
+        font-size: 2.5rem;
+    }
+    .batch-type {
+        white-space: normal;
+        border-radius: var(--radius-sm);
+        display: inline-block;
+        max-width: 100%;
+        line-height: 1.35;
+        font-size: 0.74rem;
+    }
+    .plan-features li {
+        font-size: 0.84rem;
+    }
+    .pricing-footer .btn {
+        width: 100%;
+    }
+
+    /* Fee Calculator */
+    .calculator-card {
+        padding: 1.65rem 1.15rem;
+        border-radius: var(--radius-md);
+    }
+    .calculator-body {
+        margin-top: 1.5rem;
+    }
+    .calc-control-group {
+        margin-bottom: 1.35rem;
+    }
+    .calc-control-group label {
+        font-size: 0.88rem;
+    }
+    .calc-select {
+        padding: 0.75rem 0.95rem;
+        font-size: 0.92rem;
+    }
+    .radio-box {
+        padding: 0.85rem 1rem;
+    }
+    .radio-box strong {
+        font-size: 0.92rem;
+    }
+    .radio-box small {
+        font-size: 0.76rem;
+    }
+    .calc-result-box {
+        padding: 1.35rem 1rem;
+        border-radius: var(--radius-md);
+    }
+    .calc-number {
+        font-size: 2.65rem;
+    }
+    .calc-currency {
+        font-size: 1.55rem;
+    }
+    .calc-note {
+        font-size: 0.78rem;
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: var(--radius-md);
+    }
+    .testimonial-quote {
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+    .author-info strong {
+        font-size: 0.92rem;
+    }
+    .author-info span {
+        font-size: 0.78rem;
+    }
+
+    /* FAQs */
+    .faq-question {
+        padding: 1rem 1.15rem;
+        font-size: 0.95rem;
+        gap: 0.75rem;
+    }
+    .faq-item.active .faq-answer {
+        padding: 0 1.15rem 1.15rem 1.15rem;
+    }
+    .faq-answer p {
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    /* Contact Section */
     .contact-card {
-        padding: 1.5rem;
+        padding: 1.6rem 1.15rem;
+        border-radius: var(--radius-md);
+    }
+    .contact-title {
+        font-size: 1.65rem;
+        line-height: 1.3;
+    }
+    .contact-sub {
+        font-size: 0.92rem;
+        margin-bottom: 1.5rem;
+    }
+    .contact-details-list {
+        gap: 0.85rem;
+    }
+    .contact-item {
+        padding: 0.85rem 1rem;
+        gap: 0.85rem;
+        align-items: flex-start;
+    }
+    .contact-icon-circle {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+    }
+    .contact-label {
+        font-size: 0.74rem;
+    }
+    .contact-value {
+        font-size: 0.95rem;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+    .contact-landmark {
+        font-size: 0.76rem;
     }
     .contact-form-wrap {
-        padding: 1.5rem;
+        padding: 1.6rem 1.15rem;
+        border-radius: var(--radius-md);
+    }
+    .form-title {
+        font-size: 1.25rem;
+    }
+    .form-sub {
+        font-size: 0.84rem;
+        margin-bottom: 1.35rem;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+    .form-group label {
+        font-size: 0.82rem;
+    }
+    .contact-form-wrap .btn {
+        width: 100%;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 3rem 0 1.5rem 0;
     }
     .footer-container {
         grid-template-columns: 1fr;
         gap: 2rem;
+        margin-bottom: 2rem;
     }
     .footer-bottom-content {
         flex-direction: column;
         text-align: center;
+        gap: 0.75rem;
     }
+    .seo-keywords {
+        font-size: 0.72rem;
+        line-height: 1.6;
+    }
+
+    /* Floating WhatsApp Button */
     .floating-wa {
-        bottom: 20px;
-        right: 20px;
-        width: 52px;
-        height: 52px;
+        bottom: 18px;
+        right: 18px;
+        width: 50px;
+        height: 50px;
     }
     .floating-wa svg {
         width: 26px;
         height: 26px;
     }
+
+    /* Demo Modal */
+    .modal-backdrop {
+        padding: 0.75rem;
+    }
+    .modal-box {
+        max-height: calc(100vh - 1.5rem);
+        border-radius: var(--radius-md);
+    }
+    .modal-content {
+        padding: 1.75rem 1.15rem;
+    }
+    .modal-close {
+        top: 10px;
+        right: 12px;
+        font-size: 1.6rem;
+    }
+    .modal-header {
+        margin-bottom: 1.35rem;
+    }
+    .modal-header h3 {
+        font-size: 1.22rem;
+    }
+    .modal-header p {
+        font-size: 0.82rem;
+    }
 }
 
-@media (max-width: 380px) {
-    .hero-title {
-        font-size: 1.85rem;
+/* --- 6. Compact Mobile & Single-Handed Phones (<= 520px) --- */
+@media (max-width: 520px) {
+    .nav-container {
+        gap: 0.4rem;
+    }
+    .brand-logo {
+        gap: 0.5rem;
+    }
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
     }
     .brand-name {
         font-size: 0.98rem;
     }
+    .brand-tagline {
+        font-size: 0.65rem;
+    }
+    .nav-actions {
+        gap: 0.35rem;
+    }
+    .nav-actions .btn-whatsapp {
+        padding: 0.5rem;
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+    }
+    .nav-actions .btn-whatsapp .btn-wa-text {
+        display: none;
+    }
+    .nav-actions .btn-whatsapp svg {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+    }
+    .mobile-toggle {
+        width: 38px;
+        height: 38px;
+        padding: 0.35rem;
+    }
+    
+    .tech-tag {
+        font-size: 0.74rem;
+        padding: 0.3rem 0.55rem;
+    }
+    .timeline {
+        padding-left: 1.35rem;
+        margin-left: 0.85rem;
+    }
+    .timeline-icon {
+        left: calc(-1.35rem - 13px);
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
+    }
+    .custom-plan-banner {
+        padding: 1.5rem 1rem;
+    }
+    .calc-result-box {
+        padding: 1.25rem 0.85rem;
+    }
+    .calc-number {
+        font-size: 2.35rem;
+    }
+    .contact-item {
+        padding: 0.75rem 0.85rem;
+        gap: 0.75rem;
+    }
+    .contact-icon-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+}
+
+/* --- 7. Narrow Phones (<= 380px, e.g. iPhone SE, Galaxy Fold outer, 360px phones) --- */
+@media (max-width: 380px) {
+    .container {
+        padding: 0 0.85rem;
+    }
+    .brand-name {
+        font-size: 0.92rem;
+    }
+    .brand-tagline {
+        font-size: 0.62rem;
+    }
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    .hero-title {
+        font-size: 1.65rem;
+    }
+    .section-title {
+        font-size: 1.55rem;
+    }
     .profile-frame {
-        height: 320px;
+        height: 300px;
+    }
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    .stat-label {
+        font-size: 0.74rem;
+    }
+    .course-card,
+    .comp-card,
+    .pricing-card,
+    .feature-card,
+    .testimonial-card,
+    .about-info-card,
+    .contact-card,
+    .contact-form-wrap,
+    .calculator-card {
+        padding: 1.35rem 0.9rem;
+    }
+    .calc-number {
+        font-size: 2.1rem;
+    }
+    .calc-currency {
+        font-size: 1.35rem;
+    }
+    .modal-content {
+        padding: 1.35rem 0.85rem;
+    }
+}
+
+/* --- 8. Smallest Viewports (<= 330px) --- */
+@media (max-width: 330px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    .section-title {
+        font-size: 1.4rem;
+    }
+    .calc-number {
+        font-size: 1.9rem;
     }
 }
